@@ -7,6 +7,15 @@ except ImportError:
     exit()
 
 try:
+    from database import initialize_database # Убедитесь, что имя файла и функции совпадает
+except ImportError:
+    print("Файл database.py или функция initialize_database не найдены!")
+    # Решите, что делать, если БД не может быть инициализирована.
+    # Можно либо завершить работу бота, либо работать без функций БД.
+    def initialize_database(): # Заглушка
+        logger.error("Функция initialize_database не импортирована. Функционал БД недоступен.")
+
+try:
     from ai_interface import get_custom_ai_response
 except ImportError:
     print("Файл ai_interface.py или функция get_custom_ai_response не найдены!")
@@ -23,6 +32,9 @@ logger = logging.getLogger(__name__)
 
 bot = telebot.TeleBot(BOT_TOKEN, parse_mode="HTML")
 
+logger.info("Инициализация базы данных...")
+initialize_database()
+logger.info("База данных готова к работе.")
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message: telebot.types.Message):
