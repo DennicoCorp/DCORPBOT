@@ -7,13 +7,12 @@ except ImportError:
     exit()
 
 try:
-    from database import initialize_database # Убедитесь, что имя файла и функции совпадает
+    from database import initialize_database, add_or_update_user # Добавили add_or_update_user
 except ImportError:
-    print("Файл database.py или функция initialize_database не найдены!")
-    # Решите, что делать, если БД не может быть инициализирована.
-    # Можно либо завершить работу бота, либо работать без функций БД.
-    def initialize_database(): # Заглушка
-        logger.error("Функция initialize_database не импортирована. Функционал БД недоступен.")
+    print("Проблемы с импортом из database.py!")
+    # Заглушки
+    def initialize_database(): logger.error("initialize_database не импортирована.")
+    def add_or_update_user(tid, uname, fname, lname): logger.error("add_or_update_user не импортирована.")
 
 try:
     from ai_interface import get_custom_ai_response
@@ -38,7 +37,18 @@ logger.info("База данных готова к работе.")
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message: telebot.types.Message):
+    user = message.from_user
     user_name = message.from_user.first_name
+    try:
+        add_or_update_user(
+            telegram_id=user.id,
+            username=user.username, # Может быть None, если пользователь не установил
+            first_name=user.first_name,
+            last_name=user.last_name  # Может быть None
+        )
+        logger.info(f"Информация о пользователе {user.username or user.first_name} (ID: {user.id}) сохранена/обновлена.")
+    except Exception as e:
+        logger.error(f"Ошибка при сохранении пользователя {user.id} в БД: {e}", exc_info=True)
     welcome_text = (
         f"Привет, <b>{user_name}</b>! 👋\n\n"
         f"Я бот с доступом к нейросети DeepSeek. Задавай свои вопросы!\n\n"
