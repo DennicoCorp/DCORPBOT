@@ -1,6 +1,7 @@
 import telebot
+from config import BOT_TOKEN, NEURO_API_KEY, DATABASE_URL
 
-bot = telebot.TeleBot('7626248756:AAFaxxxC68vwMaSw9CDQ5E1gfcY6EUZzIH8')
+bot = telebot.TeleBot(BOT_TOKEN)
 
 @bot.message_handler(commands=['start'])
 def main(message):
