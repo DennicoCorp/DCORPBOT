@@ -1,5 +1,5 @@
 import telebot
-from config import BOT_TOKEN, NEURO_API_KEY, DATABASE_URL
+from config import BOT_TOKEN, NEURO_API_KEY, DATABASE_URL, DEBUG_MODE
 
 bot = telebot.TeleBot(BOT_TOKEN)
 
